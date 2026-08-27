@@ -1,0 +1,42 @@
+---
+title: Launchpad user guide
+description: How to deploy, run and share an app on Launchpad.
+template: splash
+hero:
+  tagline: Deploy a repository. Get a URL. Share it with the people who need it.
+  actions:
+    - text: Deploy your first app
+      link: start/first-app/
+      icon: right-arrow
+    - text: What Launchpad is
+      link: start/what-launchpad-is/
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+<CardGrid stagger>
+  <Card title="Start here" icon="rocket">
+    Sign in, deploy a repository, and find your app's URL.
+    [Deploy your first app](start/first-app/)
+  </Card>
+  <Card title="Build an app" icon="seti:config">
+    What Launchpad detects, which language versions you can pin, and what
+    `launchpad.toml` can say. [Supported frameworks](build/frameworks/)
+  </Card>
+  <Card title="Share it" icon="approve-check">
+    Private, signed-in or public — and what your app is told about whoever is
+    looking at it. [Who can see your app](share/visibility/)
+  </Card>
+  <Card title="From your terminal" icon="laptop">
+    Push the working tree with `lp deploy`, without committing or pushing to a
+    git host first. [Installing lp](cli/installing/)
+  </Card>
+</CardGrid>
+
+:::note
+This guide is for people who build and run apps on Launchpad. If you administer
+the install itself — identity providers, storage, licensing, who may publish —
+that is the **admin guide**, a separate app your administrator can install from
+the Gallery.
+:::
