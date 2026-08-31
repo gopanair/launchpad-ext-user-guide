@@ -19,6 +19,15 @@ import starlight from "@astrojs/starlight";
 export default defineConfig({
   base: "/apps/_user-guide",
   trailingSlash: "always",
+  // The front door is the first page, not a landing page in front of it.
+  // A splash of cards duplicating the sidebar is a click between somebody and
+  // the thing they came for, and every route into this guide — the
+  // Documentation card, a bookmark, the app's own address — arrives at `/`.
+  // So `/` *is* the first page. `index.mdx` is gone rather than hidden: a page
+  // nothing links to is a page that rots.
+  redirects: {
+    "/": "/apps/_user-guide/start/what-launchpad-is/",
+  },
   // No `site`: this repo is deployed to every customer's own hostname, so there
   // is no canonical origin to bake in. Anything needing one — a sitemap, an
   // absolute og:url — would be wrong on every install but ours.

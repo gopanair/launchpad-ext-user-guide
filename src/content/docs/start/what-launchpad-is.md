@@ -6,6 +6,14 @@ description: Where your organization's own software lives, and what Launchpad do
 Launchpad is where your organization's own software lives — web apps, APIs,
 dashboards, reports and scheduled work, built in-house.
 
+:::note
+This guide is for people who build and run apps on Launchpad. If you administer
+the install itself — identity providers, storage, licensing, what may be
+published — that is the **admin guide**, a separate app your administrator can
+install from the gallery. For `lp` and the app SDK, that is the **CLI and SDK
+guide**.
+:::
+
 You give it a repository. It clones the code, works out what language and
 framework it is, installs the dependencies, builds it, starts it, and serves it
 at a URL. You do not write a Dockerfile, pick a base image, or configure a web
