@@ -12,6 +12,14 @@ feature, and the limits are the point of it.
 | **Shape** | One document. No keys, no collections, no listing, no queries. |
 | **Contents** | Yours. Launchpad stores it as text and never reads it. |
 
+```python
+from launchpad import data
+
+doc = data.get()
+doc["last_run"] = "2026-08-31T02:00:00Z"
+data.set(doc)
+```
+
 ## What it is for
 
 Small state that belongs to the app rather than to a person: a saved filter, a
@@ -34,11 +42,27 @@ connection string as an environment variable.
 - **`{}`** — an empty object, which the app deliberately wrote.
 
 These are three different answers, not one. Code that treats "never written" and
-"empty" as the same thing is code that will do the wrong thing the first time
-somebody clears it.
+"empty" as the same thing will do the wrong thing the first time somebody clears
+it.
 
 ## Versions
 
-Every read gives you a version. You can use it as a precondition on a write, so
-two concurrent writers do not silently overwrite each other. That is opt-in —
-write without one and the last write wins.
+Every read gives you a version. You can use it as a **precondition** on a write,
+so two concurrent writers do not silently overwrite each other:
+
+```python
+doc, version = data.get_with_version()
+data.set(doc, if_version=version)   # VersionConflict if somebody else wrote
+```
+
+The version is always there. Using it is opt-in — write without one and the last
+write wins.
+
+## Your owner's view
+
+Whoever can edit the app can see the document's **metadata** — that it exists,
+its size, its version — and can reset it. They do not read its contents from the
+platform.
+
+That reset exists for the moment your app has written something it cannot
+recover from. It is not a browser for your data.

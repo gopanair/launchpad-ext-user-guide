@@ -1,64 +1,37 @@
 ---
 title: Deploying with lp
-description: Pushing the working tree, and what gets sent.
+description: The commands you will use daily, and the exit codes that matter in CI.
 ---
 
 ```bash
 lp deploy
 ```
 
-From inside your project. It sends what is on your disk **right now** —
-uncommitted changes included, nothing pushed to a git host.
+From inside your project. Sends what is on your disk right now. What gets sent,
+and how the app is chosen, is on [From your machine](../../deploy/from-your-machine/).
 
-## Which app
-
-```toml
-# launchpad.toml
-[app]
-slug = "phase-test"
-
-# a checkout that targets two installs says so, and neither is wrong
-[app.installs."https://staging.launchpad.corp"]
-slug = "phase-test-stg"
-```
-
-Or `--app <slug>` on the command line. `lp link` sets it up for you.
-
-## What gets sent
-
-**`.gitignore` decides** — every one in the tree, with `!` negations honoured,
-plus `.git/info/exclude`. `.launchpadignore` is additional, never a
-replacement.
-
-`lp` does **not** shell out to git, so this works in a plain folder that is not
-a repository at all.
-
-Always dropped: `.git/`, `.hg/`, `.svn/`, `node_modules/`, `venv/`, `.venv/`,
-`__pycache__/`, `*.pyc`, `.DS_Store`.
-
-Dropped **only when the tree root has a `package.json`**: `dist/`, `build/`,
-`out/`, `.next/`, `.nuxt/`, `.svelte-kit/`. That is the right bet for a Node
-project and the wrong one for a static site — so a `[static] root` pointing
-inside one of those wins, and your `dist/` ships.
-
-:::note
-`lp deploy` does not convert your app. Deploying from your machine to an app
-that was created from a git repository does not detach it from that repository
-or change how it updates.
-:::
-
-## Other commands
+## The commands
 
 | Command | What it does |
 |---|---|
-| `lp status` | Is it up, what is it serving, when was it deployed |
-| `lp logs --follow` | The run log; `--deploy <id>` prints a build log instead |
-| `lp redeploy` | Rebuild the current source |
+| `lp apps` | List the apps you can reach |
+| `lp create` | Create an app, naming the slug before claiming it |
+| `lp link` | Write the `[app]` table, validating the slug first |
+| `lp deploy` | Push the working tree |
+| `lp redeploy` | Rebuild from the repository the app names |
+| `lp status` | Is it up, what is it serving, since when |
+| `lp logs` | Run log; `--follow` to stream, `--deploy <id>` for a build log |
+| `lp events` | The failure feed |
+| `lp restart` · `lp start` · `lp stop` | Lifecycle |
 | `lp rollback` | Back to a previous release |
-| `lp job run <name>` | Run a job, waiting by default |
-| `lp task run <name>` | Fire a scheduled task now |
-| `lp store ls\|put\|get\|rm` | Files in a store you hold a grant on |
+| `lp job` | `list` · `run` · `runs` · `logs` · `cancel` |
+| `lp task` | `run` a scheduled task now |
+| `lp store` | `ls` · `put` · `get` · `rm` |
 | `lp sdk vendor` | Vendor the install's own app SDK into your project |
+
+`--json` on the commands that have it, for anything you are parsing.
+
+Flags come before positionals.
 
 ## Exit codes are a contract
 
@@ -70,9 +43,9 @@ or change how it updates.
 4  could not reach the install
 ```
 
-Worth internalising for CI: **1 and 3 are different failures.** A build that
-ran and failed is 1. A credential the install rejected is 3. An install you
-could not reach at all is 4.
+Worth internalising for CI: **1 and 3 are different failures.** A build that ran
+and failed is 1. A credential the install rejected is 3. An install you could
+not reach at all is 4.
 
 `lp job run` and `lp task run` wait by default, and **the run's outcome is the
 exit code** — so a failing nightly job fails your pipeline without you parsing
@@ -84,3 +57,11 @@ not a success.
 `lp` detects a non-interactive terminal rather than remembering a flag you set
 once. It will not prompt, and anything that needed a confirmation is refused
 with exit 2 instead of hanging.
+
+That is why `lp rollback` in a pipeline needs `--yes`.
+
+## The install's address is the install's answer
+
+`lp` asks the install where its apps are served, once per invocation, rather than
+deriving a URL from the one you typed. So a split-origin install, a custom
+hostname and a reverse proxy all work without configuration on your side.

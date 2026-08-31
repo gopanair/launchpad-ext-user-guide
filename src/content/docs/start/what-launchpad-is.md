@@ -17,21 +17,27 @@ server.
   up for this install.
 - **Build logs and run logs**, kept per app, so a failed deploy tells you what
   happened.
-- **Control over who can see it** — private to you, anyone signed in, or public.
+- **Control over who can see it** — private, anyone signed in, or public — and
+  a way for colleagues to ask for access.
 - **Environment variables**, stored encrypted, that your app reads at startup.
-- **Scheduled work**, if your app publishes a path for it.
+- **Releases**, so you can roll back to the one that worked.
+- **Scheduled work** — a schedule that calls your app, or a job that runs your
+  code in a container of its own.
 
 ## What Launchpad is not
 
 It is not a general container platform. It runs the languages and frameworks
-listed under [Supported frameworks](../../build/frameworks/), and a repository
-it cannot recognize is refused with a reason rather than deployed and left to
-crash.
+listed under [How Launchpad reads your repository](../../build/how-detection-works/),
+and a repository it cannot recognize is refused with a reason rather than
+deployed and left to crash.
 
 It is not a place to store data. An app gets a small
 [JSON document](../../data/app-data/) of its own, and — where an administrator
 has set one up — [file storage](../../data/app-storage/). Anything more is a
 database your administrator provides.
+
+It is not a CI system. It builds what you give it; it does not run your tests,
+gate your merges, or hold your pipeline.
 
 ## The two halves of a Launchpad install
 
@@ -41,4 +47,16 @@ database your administrator provides.
 | **Your apps** | Whoever you share them with. Served on a different address from the platform, on purpose, so an app's JavaScript cannot read the platform as you. |
 
 That separation is why an app's links have to keep the `/apps/your-app` prefix.
-It comes up when you build one — see [Supported frameworks](../../build/frameworks/).
+It is the single most common cause of a deploy that succeeds and a page that
+looks broken — see [Base paths](../../build/base-paths/).
+
+## Three words worth learning now
+
+**Deploy.** One attempt to turn source into a running app. It has three phases
+and its own log, and it either produces a release or fails.
+
+**Release.** The built output of a successful deploy, kept on the install. One
+of them is *serving*; the others are what you roll back to.
+
+**Workload.** The running process (or container) that answers requests. It can
+be replaced, restarted, slept and woken without your release changing.

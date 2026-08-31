@@ -3,30 +3,28 @@ title: Deploy your first app
 description: From a repository URL to a running app, and what happens in between.
 ---
 
-There are two ways to get code onto Launchpad. Start with the first.
+This walks the shortest path: a git repository to a URL you can send someone.
+Ten minutes, and you need to be a [publisher](../signing-in/).
 
-## From a git repository
+## 1. Create the app
 
-1. Go to **New app**.
-2. Paste the repository URL.
+1. Press **New app**.
+2. Paste the repository URL, or pick a repository from a git host your
+   administrator has connected.
 3. Give the app a **name**. Launchpad turns it into a **slug** — lowercase
    letters, digits and hyphens — and that slug is the app's address:
-   `/apps/your-slug`. You can rename later, but the URL changes with it.
-4. Deploy.
+   `/apps/your-slug`.
+4. Press **Create**.
 
-If the repository is private, your administrator has to have connected the git
-host first. You are never asked for a token; if the host is not connected, the
-clone fails and says so.
+If the slug you asked for is taken, Launchpad tells you the one it actually
+used rather than silently renaming your app. Slugs beginning with `_` are
+refused: that namespace belongs to apps Launchpad installs itself, like this
+guide.
 
-## From your machine
+## 2. Watch the deploy
 
-`lp deploy` pushes what is on your disk right now, without committing or
-pushing anywhere first. It is the faster loop while you are still working
-things out. See [Installing lp](../../cli/installing/).
-
-## What happens after you press deploy
-
-A deploy runs in three phases, and the page shows you which one you are in.
+The deploy starts on its own, and a console appears above the tabs while it
+runs. It has three phases:
 
 | Phase | What happens |
 |---|---|
@@ -34,25 +32,49 @@ A deploy runs in three phases, and the page shows you which one you are in.
 | **Scan** | Your dependencies are checked against your install's policy. Depending on how strict that policy is, a finding can warn you or stop the deploy. |
 | **Deploy** | Dependencies are installed, the app is built, and the workload is started. |
 
-The build log is live. If something fails, the log is where the reason is —
-not a generic error on the app page.
+The build log is live. If something fails, **the log is where the reason is** —
+not the status word on the app page. See [Watching a deploy](../../deploy/watching/).
 
-## It failed on "unsupported framework"
+## 3. Open it
 
-Launchpad decided your repository is not one of the shapes it can run. The
-message names what it looked for. The two common cases:
+The app's URL is on its Overview tab. Copy it from there rather than typing it:
+apps are served on a different address from the platform, and which address is
+your administrator's decision.
+
+A brand-new app is **private**. The URL works for you and for nobody else until
+you [share it](../../share/visibility/).
+
+## 4. Give it configuration
+
+Nothing secret belongs in the repository. On the **Settings** tab, add
+environment variables — a database URL, an API key — and your app reads them the
+ordinary way at startup.
+
+A change takes effect at the **next start**, not immediately. The app page says
+so with a banner while a saved value has not reached the running process.
+
+## If it failed
+
+Two failures account for most first deploys.
+
+**"Unsupported framework."** Launchpad decided your repository is not one of the
+shapes it can run, and the message names what it looked for. The two common
+cases:
 
 - **A front-end build with no server.** A Vite or Create React App repository
   has a `package.json` but no `start` script, so there is nothing to run.
   Either add a server and a `start` script, or commit the built output and
   declare it as a [static site](../../build/static/).
 - **A Python project with no obvious entry point.** Launchpad looks for
-  `app.py`, `main.py`, `streamlit_app.py`, `server.py` or `wsgi.py`. Name your
-  entry point one of those.
+  `app.py`, `main.py`, `streamlit_app.py`, `server.py` or `wsgi.py`.
 
-## It deployed but the page is broken
+**It deployed and the page is broken.** Almost always links. Your app is served
+under `/apps/your-slug`, and a link written as `/styles.css` asks the *platform*
+for that file, not your app. That rule has [a page of its
+own](../../build/base-paths/), and it is worth reading once properly.
 
-Almost always links. Your app is served under `/apps/your-slug`, and a link
-written as `/styles.css` asks the *platform* for that file, not your app. See
-[Supported frameworks](../../build/frameworks/) for what each framework is told
-about its mount point.
+## Next
+
+- Push from your machine instead of via git: [From your machine](../../deploy/from-your-machine/).
+- Let colleagues in: [Who can see your app](../../share/visibility/).
+- Run something nightly: [Scheduled tasks](../../automation/scheduled-tasks/).

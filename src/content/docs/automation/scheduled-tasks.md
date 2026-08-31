@@ -15,27 +15,60 @@ Your app does the work in the handler and returns. That is the whole mechanism.
 ## Setting one up
 
 On the app's **Automation** tab: the path, the method, and the schedule as a
-cron expression. The path is relative to your app, so `/internal/refresh`, not
-the full URL.
+cron expression. The path is relative to your app — `/internal/refresh`, not the
+full URL.
+
+Your install caps how many schedules one app may have.
 
 ## What you have to know
 
-- **Your app has to be running.** The request wakes a sleeping app the way any
-  other request does. A stopped or locked app does not answer, and the run is
-  recorded as skipped.
-- **There is a ceiling on how long it may take**, and a memory envelope, both
-  smaller than a job's. A scheduled task is meant for a request, not for an
-  hour of batch work. If you need that, use a [job](../jobs/).
-- **Protect the path.** It is a path in your app, reachable like any other. Give
-  it a check of its own — a shared secret in a header from an environment
-  variable is the usual approach.
-- **A skipped run is recorded. A refused one is not.** If your app returns an
-  error, that is a run that happened and failed, and you will see it. If
-  Launchpad never made the request, you will see that too, with the reason.
+**Your app has to be running.** The request wakes a sleeping app the way any
+other request does. A stopped or locked app does not answer, and the run is
+recorded as skipped.
+
+**There is a ceiling on how long it may take**, and a memory envelope — both
+tighter than a [job](../jobs/)'s. A scheduled task is meant for a request, not
+for an hour of batch work.
+
+**Protect the path.** It is a path in your app, reachable like any other. Give it
+a check of its own — the usual approach is a shared secret in a header, from an
+environment variable.
+
+**Tell a firing from a visit.** The request carries headers naming the schedule
+and the run, so your handler can behave differently when a person opens the same
+path. The SDK exposes them.
+
+## Reading the result
+
+Each run has an outcome, a duration, and a log. Your app can write into that
+run's own log through the SDK while it works, which is how a task that takes two
+minutes says what it is doing.
+
+What your app answers becomes the run's stored result, up to a cap your
+administrator sets. Return something small and useful — a count, a summary —
+rather than the whole payload.
+
+## A skipped run is recorded; a refused one is not
+
+If your app returns an error, that is a run that happened and failed, and you
+will see it. If Launchpad never made the request — the app was stopped, locked,
+or the previous run was still going — that is recorded too, with the reason.
+
+What is not recorded is a request that was refused before it was a run at all.
+
+## Running one now
+
+```bash
+lp task run <name>
+```
+
+Waits by default, and the run's outcome is the exit code. **A skipped task is
+exit 1**: a firing that did not happen is not a success.
+
+A task takes no parameters. Its parameters, if it needs any, belong to its
+schedule.
 
 ## This is not the job system
-
-They look similar and they are not the same thing:
 
 | | Scheduled task | Job |
 |---|---|---|
@@ -43,3 +76,4 @@ They look similar and they are not the same thing:
 | Your app must be | Running | Not necessarily |
 | Good for | A refresh, a cache warm, a nightly poke | Batch work, reports, migrations |
 | Limits | Tight | Generous |
+| Available | Always | Where your install has it configured |

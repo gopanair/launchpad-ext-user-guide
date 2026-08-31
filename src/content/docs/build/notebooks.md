@@ -1,47 +1,68 @@
 ---
-title: Notebooks
-description: Publishing a Jupyter or Quarto notebook as a page anyone can read.
+title: Notebooks and documents
+description: Publishing a Jupyter, Quarto or R Markdown document as a page anyone can read.
 ---
 
-A repository holding one `.ipynb` or `.qmd` at its root is a notebook app.
+A repository holding one `.ipynb`, `.qmd` or `.Rmd` at its root is a **document
+app**: executed once at build time, and served as the page that fell out.
+
+| Source | Engine |
+|---|---|
+| `.ipynb` | Python |
+| `.qmd` | Python or R, depending on its engine |
+| `.Rmd` | R Markdown |
+| `.Rmd` with `runtime: shiny` | not a document — that is a [Shiny app](../r/) |
 
 ## It is executed once, at build time
 
-This is the thing to understand. Your notebook runs **during the deploy**, with
-your app's own environment variables, and what gets served is the document that
-fell out. Visitors do not execute anything. Nobody gets a kernel.
+This is the thing to understand. Your document runs **during the deploy**, with
+your app's own environment variables, and what gets served is the output.
+Visitors execute nothing. Nobody gets a kernel.
 
 That means:
 
 - The numbers on the page are the numbers from deploy time. To refresh them,
-  deploy again — or put a [scheduled task](../../automation/scheduled-tasks/) on
-  it.
+  deploy again — or put a [render schedule](../reports/) on it.
 - A notebook that takes ten minutes to run makes a ten-minute deploy.
-- A notebook that fails fails the *deploy*, with the error in the build log.
+- A notebook that fails fails the **deploy**, with the error in the build log,
+  and the previously published document keeps serving.
+
+There is a render timeout your administrator sets. Past it the deploy fails and
+what was already published stays up.
 
 ## Your environment variables are in the output
 
-Your notebook runs with your app's environment, and whatever it prints goes into
-a published document. If you print a connection string, the connection string is
-on the page. The build tells you which variable names were available so this is
-not a surprise.
+Your document runs with your app's environment, and whatever it prints goes into
+a published document. **If you print a connection string, the connection string
+is on the page.**
+
+The build log names which variables were available, so this is not a surprise.
+Treat a published document as public-facing output even when the app is private.
 
 ## The renderer is provided
 
-You do not add `jupyter`, `nbconvert` or `quarto` to `requirements.txt`.
-Launchpad installs the renderer. Add the libraries your notebook *imports*.
+You do not add `jupyter`, `nbconvert` or `quarto` to your dependencies.
+Launchpad installs the renderer. Declare the libraries your document *imports*.
 
-## Quarto
+The rendered output is served from a directory Launchpad owns — never from your
+release — so your `.qmd`, your `.Rmd`, `renv/` and `renv.lock` are 404 at any
+depth. The source is not published with the document.
+
+## Quarto: which engine
 
 A `.qmd` is Python or R depending on its **engine**, decided at detection time
 in this order:
 
 1. `[notebook] engine = "knitr"` in `launchpad.toml`
 2. `engine:` or `knitr:` in the document's YAML header
-3. A fenced ```` ```{r} ```` chunk
+3. A fenced ` ```{r} ` chunk
 4. Otherwise, Python
 
-## Interactive notebooks are a different thing
+A `.qmd` with neither a declaration nor R chunks stays a Python notebook. That
+rule exists so a document deployed before R was available does not silently
+change framework underneath you.
 
-If you want a viewer to change an input and see the result, you do not want a
-notebook — you want a server. Use [marimo, Streamlit or Shiny](../frameworks/).
+## Interactive documents are a different thing
+
+If a viewer needs to change an input and see the result recomputed, you do not
+want a document — you want a server. Use marimo, Streamlit or Shiny.

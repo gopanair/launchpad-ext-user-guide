@@ -14,26 +14,33 @@ depends on **who the key belongs to**.
 
 ## Personal keys — `lpu_`
 
-This is what `lp login` gives you. It is *you*: anything you can do, it can do,
-across every app you can reach.
+What `lp login` gives you, and what you create under **Me → Credentials**.
 
-Treat it like your password. If a script needs to touch one app, give it an app
-key instead.
+It is *you*: anything you can do, it can do, across every app you can reach.
+Treat it like your password. If a script only ever needs to touch one app, give
+it an app key instead.
+
+You can name, list, rotate and revoke your own keys, and see when each was last
+used.
 
 ## App keys — `lp_`
 
-Scoped to one app. Useful for a script or an integration that only ever needs
-that app.
+Created on an app, scoped to that app. Useful for a script or an integration
+that only ever needs it — and for handing to whoever is running a security scan
+against your app, since it authenticates without being anybody.
 
 An app key can carry a stored role, but only one of two, and only within what
-the app's own gate already allows — it can narrow what the key may do, never
+the app's own access already allows. It can narrow what the key may do; never
 widen it.
 
 ## Deploy keys — `lpd_`
 
-For CI. A deploy key belongs to no person, so it does not stop working when
-somebody leaves. What it can do is a **strict subset** of what a personal key
-can do.
+For CI, created by an administrator. A deploy key belongs to no person, so it
+does not stop working when somebody leaves. What it can do is a **strict subset**
+of what a personal key can do.
+
+Use one in a pipeline. A personal key in CI is a person's identity in a place
+nobody is watching.
 
 ## What no key can do
 
@@ -44,5 +51,9 @@ reachable by a key at all.
 
 ## Turning one off
 
-Off means **absent**, and off means **now**. A disabled key stops working on the
+Off means **absent**, and off means **now**. A revoked key stops working on the
 next request; there is no cache to wait out and no grace period.
+
+Your administrator can see and revoke every key on the install, and can switch
+personal keys off entirely — in which case existing ones stop working
+immediately.

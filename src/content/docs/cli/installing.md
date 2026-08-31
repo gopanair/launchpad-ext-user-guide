@@ -3,8 +3,11 @@ title: Installing lp
 description: Getting the command-line client and signing it in.
 ---
 
-`lp` is Launchpad's command-line client. Its main job is to push what is on
-your disk to an app, without committing or pushing to a git host first.
+`lp` is Launchpad's command-line client. Its main job is to push what is on your
+disk to an app, without committing or pushing to a git host first.
+
+This page gets you signed in. The full command reference is the **CLI and SDK
+guide**, a separate app your administrator can install from the gallery.
 
 ## Install
 
@@ -19,6 +22,7 @@ lp login https://launchpad.your-company.com
 ```
 
 That opens a browser, you approve the device, and `lp` stores a personal key.
+Your browser session is the authorization — you do not paste a token.
 
 Credentials go in `credentials.toml` under your config directory —
 `~/.config/launchpad/` on Linux and macOS, `%AppData%\launchpad\` on Windows —
@@ -31,8 +35,6 @@ a secret in it never become one file.
 There is no `--token` on `lp`. A secret on a command line lands in your shell
 history and in the process table, where anything on the machine can read it.
 
-The ways to supply one:
-
 | | |
 |---|---|
 | `lp login` | Stores it. The normal path. |
@@ -41,11 +43,11 @@ The ways to supply one:
 | `--token-stdin` | Piped in. |
 
 :::caution
-**A credential and an address are one statement.** `LAUNCHPAD_TOKEN` is used
-only when the install came from `LAUNCHPAD_URL` too. Every other combination is
-refused, naming both halves — including your stored default. `--install
-staging` on a machine holding a production token is exactly the accident this
-rule exists to catch.
+**A credential and an address are one statement.** `LAUNCHPAD_TOKEN` is used only
+when the install came from `LAUNCHPAD_URL` too. Every other combination is
+refused, naming both halves — including your stored default. `--install staging`
+on a machine holding a production token is exactly the accident this rule exists
+to catch.
 
 Setting both `LAUNCHPAD_TOKEN` and `LAUNCHPAD_TOKEN_FILE` is a refusal, not a
 precedence rule.
@@ -69,3 +71,12 @@ stdout so it cannot corrupt piped output.
 
 Nothing on your machine decides a credential has expired. The install answers,
 and `lp` reports exit 3.
+
+## Signing out
+
+```bash
+lp login --forget
+```
+
+Drops the stored credential from this machine and says so. It does **not** revoke
+the key — do that under [Me → Credentials](../api-keys/) if the machine is gone.

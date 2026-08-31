@@ -8,36 +8,65 @@ may do**. It does not, by default, tell your app **who they are**.
 
 ## The role
 
-Each forwarded request carries a role — one of a small fixed set of words —
-saying what this caller is allowed to do with this app.
+Each forwarded request carries `X-Launchpad-Role`, one of exactly six words:
 
-Two rules matter more than the list:
+```
+unknown  anonymous  viewer  editor  owner  system  app
+```
 
-- **The value is signed.** Your app should verify it rather than trust the
-  header text. Absent, unverifiable and expired all mean the same thing: refuse.
+Three rules matter more than the list:
+
+- **It is signed**, per app and per start. Verify it rather than trusting the
+  header text. The SDK does this for you.
+- **Absent, unverifiable and expired are one word, and that word refuses.** A
+  role you cannot verify is not a weaker role; it is no role.
 - **A role is not an identity.** Two people with the same role are
-  indistinguishable to your app. The role tells you nothing about who is there,
-  and there is no way to tell from it whether a human is involved at all.
+  indistinguishable to your app, and nothing in it tells you whether a human is
+  involved at all.
 
-Your app enforces its own rules. Launchpad does not enforce anything on your
-behalf inside your app, and your app must not enforce anything on Launchpad's
-behalf either.
+The role is **not** behind the viewer-identity switch below, and it may not be
+off by default: your app is always told what the caller may do.
 
 ## Asking who someone is
 
-Where an administrator has switched it on, your app can ask Launchpad who the
-current viewer is. Two things about it:
+Where an administrator has switched it on, per app, your app can ask Launchpad
+who the current viewer is.
 
-- It is **off unless switched on**, per app. A "no" and a "not allowed" never
-  collapse into the same answer.
+- **It is off unless switched on.** Not being permitted and there being nobody
+  signed in are **different answers** — `403` and `204` — and they never
+  collapse into one.
 - It is not available to a [static app](../../build/static/) or a rendered
-  notebook — those have no process to hold a token.
+  [document](../../build/notebooks/): those have no process to hold a token.
 
-## Never assume
+```python
+from launchpad import viewer, caller
 
-- **Never trust a header your app did not verify.** Anything can be sent to your
-  app by anything that can reach it.
-- **Never use the role as a user id.** It is a permission word, not a person.
-- **Never assume a viewer exists.** Scheduled tasks, health checks and probes
-  reach your app with nobody behind them, and "nobody in particular" is a valid
-  caller.
+who = viewer()          # None if nobody, refused if not permitted
+role = caller()         # always available
+```
+
+## What your app must never do
+
+**Never trust a header your app did not verify.** Anything that can reach your
+app can send anything.
+
+**Never use the role as a user id.** It is a permission word, not a person.
+
+**Never assume a viewer exists.** Scheduled tasks, health checks and probes reach
+your app with nobody behind them, and "nobody in particular" is a valid caller.
+
+**Never enforce Launchpad's rules for it.** The platform refuses first. Your app
+enforces its own rules, on its own screens, and does not try to re-implement
+visibility or grants.
+
+## An API key can carry a role
+
+A key acting on your app carries one of two roles as a stored grant — bounded by
+what the app's own access already allows. It can narrow what a key may do, never
+widen it. From inside your app it looks like any other role.
+
+## Groups are not sent
+
+If your app needs to know which team somebody is on, it has to get that from
+somewhere else. Launchpad tells your app what a viewer may *do*, not which
+groups they are in.
