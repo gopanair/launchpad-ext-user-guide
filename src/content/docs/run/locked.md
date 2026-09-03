@@ -20,12 +20,30 @@ has to press start.
 
 ## What a lock blocks
 
-Deploying, starting, changing visibility, running jobs, and everything else that
-would bring the app back or change what it serves. Visitors to the app's URL get
-the administrator's message too.
+Deploying, starting, changing visibility, running jobs, **rolling back**, and
+everything else that would bring the app back or change what it serves. Visitors
+to the app's URL get the administrator's message too.
+
+Rollback is on that list for the same reason a deploy is: it changes what would
+be served the moment the app came back.
 
 The refusal always carries the reason the administrator typed. **Read it** — it
-is a message written to you, not a generic error string.
+is a message written to you, not a generic error string. From the CLI a locked
+app is **exit 2**, not exit 1 — nothing was attempted and failed; you were
+refused — and the refusal names who locked it.
+
+## Two things can lock an app
+
+Usually a person did. But your install may also be set to lock an app
+automatically when the release it is serving carries a serious enough
+[dependency finding](../dependencies/), and the refusal tells you which kind
+you are looking at.
+
+If it was the dependency sweep, you will have been emailed, and the way out is
+to deploy a release that fixes the finding. Asking an administrator to unlock it
+is a temporary answer: an app unlocked while the finding still matches is
+**locked again on the next pass**. What makes an unlock stick is a waiver, and
+that is an administrator's decision to make deliberately.
 
 ## What to do
 

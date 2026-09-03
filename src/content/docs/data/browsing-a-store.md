@@ -18,12 +18,23 @@ A folder nobody granted you is not shown. Not greyed out — absent.
 ## From the terminal
 
 ```bash
-lp store ls reports
-lp store ls reports 2026-08/
+lp store ls                                     # what you can reach, at what level
+lp store ls reports                             # one level: folders, then objects
+lp store ls reports/2026-08                     # the level below
 lp store put reports 2026-08/summary.csv ./summary.csv
 lp store get reports 2026-08/summary.csv
 lp store rm  reports 2026-08/summary.csv
 ```
+
+**`lp store ls` shows folders, and takes one.** A bare `lp store ls` lists what
+you hold: a store you were granted outright by its name alone, and a store you
+were granted one folder of as `reports/2026-08/`. That is the same spelling
+`ls` takes as an argument, so the line you read off one command is the line you
+paste into the next.
+
+Listing a level prints its folders first and then its objects, which is what
+makes an object filed under a generated name reachable with `lp` alone — you no
+longer have to know the name to find it.
 
 ## The transfer does not go through Launchpad
 

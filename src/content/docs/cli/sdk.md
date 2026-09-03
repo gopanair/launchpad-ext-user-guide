@@ -22,6 +22,17 @@ The install serves the SDK it speaks, so vendoring gets you a version matched to
 the platform you are deploying to. A language your install does not carry is a
 stated refusal, not a broken download.
 
+**The SDK is identified by its bytes.** `lp sdk vendor` prints the build id of
+the copy it just wrote, and the platform reports the same id for its own — so
+you can tell whether the copy in your tree is the copy your install would have
+given you. Both build logs print it too. That is a checksum rather than a
+declared version, because a declared version is a thing somebody forgets to
+change.
+
+If you deploy to an isolated install whose runner image carries a different copy
+from the platform's, the build log **says so and the deploy still succeeds** —
+it names both, and it is your administrator's cue to rebuild the image.
+
 ## What is in it
 
 ```python
@@ -48,6 +59,13 @@ checking one is not a round trip.
 **Role verification is done properly.** `verify_role` checks the signature rather
 than reading the header, and treats absent, unverifiable and expired as one
 answer: refuse.
+
+**It knows where it is mounted.** `app.base_path` — and its peers in the other
+three languages — is where your app is served from, which is what you build
+links out of. See [Base paths](../../build/base-paths/).
+
+**A write hands back what it wrote.** `data.set(...)` returns the document, not
+an empty handle, so you do not have to read it back to find out what was saved.
 
 ## Errors are typed
 

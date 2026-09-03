@@ -55,6 +55,21 @@ whether something is still trying.
 **A start that produced no process is not a start.** You will not see "running"
 over a workload that never came up.
 
+**A restart loop is found either way it arrives** — five restarts inside fifteen
+minutes, whether they all land at once or one at a time over the window. And the
+restart count on the page says what it is counting, so the number you read and
+the verdict you are shown are about the same stretch of time.
+
+## A workload that never starts
+
+A start gets five minutes. Past that it is not *starting* any more, and the app
+reads **crashed** with the reason your install's backend gave — which, for the
+failure that used to hang indefinitely, is the scheduler's own sentence: no
+machine with that much memory, nothing matching that placement rule.
+
+There is no process to crash and no log to read in that case, so the platform
+says what it was told rather than waiting for something that is never coming.
+
 ## Out of memory
 
 Every app has a memory ceiling — your install's figure, or a higher one an

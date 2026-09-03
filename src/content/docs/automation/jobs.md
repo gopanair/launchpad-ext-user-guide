@@ -53,6 +53,23 @@ one.
 lp job run report --param region=emea
 ```
 
+## Parameters are not a payload
+
+Those are two different things, and a run can have either, both or neither.
+
+**Parameters** are small named values, declared in `launchpad.toml` and read
+from `run.params`. **A payload** is a body of data handed to the run, which the
+platform stores and gives your process a link to.
+
+**A run given no payload is given no input location at all** — the variable is
+absent, so *"was I given one?"* is answerable by looking rather than by reading
+something and interpreting the error. A run started with parameters alone has no
+input; read the parameters.
+
+If you do read a payload, read it **at the start of the run**. The link is
+presigned and expires, so a job that reads its input an hour in gets a refusal
+that is about the link, not about the data.
+
 ## Concurrency and queueing
 
 Your install caps how many of one app's runs may be in flight. Over that, a run

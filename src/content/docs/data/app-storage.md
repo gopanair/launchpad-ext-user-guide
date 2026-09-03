@@ -64,6 +64,33 @@ A grant narrows only by **folder**, and a folder is what gets mounted.
 There is no administrator bypass: a folder nobody granted you is not a row you
 can see, and being an administrator does not change that.
 
+## One name can be two mounts
+
+A mapping's identity is `(resource, app, folder)`, so one resource can be
+attached to your app **twice** — the root read-only and a folder at `write`, at
+two paths in one workload. That is the shape this exists for: a corpus you read
+and a drop you write.
+
+Both arrive under the same name, and the folder is what tells them apart:
+
+```python
+lp.storage("warehouse").path                    # the only mount of that name
+lp.storage("drop", folder="backup").path        # say which
+```
+
+**A name matching two mounts with no folder named raises**, listing what is
+mounted and at what level, rather than picking one for you. Returning the first
+would answer by the alphabetical order of paths somebody else chose.
+
+`folder=""` names the root explicitly; leaving it out means *do not care*, which
+is the ordinary case and is only ever ambiguous when there really is more than
+one.
+
+Every SDK has it: `lp.storage(name, folder=…)` in Python,
+`lp.storage(name, { folder })` in Node, `lp.StorageIn(name, folder)` in Go —
+Go having no keyword arguments — and `storage(name, folder)` in R. `store` and
+`StoreIn` are the same thing for object stores.
+
 ## Naming
 
 A resource's **slug is its identity** and cannot be renamed — only its label can.

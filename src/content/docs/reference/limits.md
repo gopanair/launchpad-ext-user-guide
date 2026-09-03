@@ -66,6 +66,6 @@ disabled buttons, no tabs that explain themselves.
 
 Ask your administrator before designing around any of them.
 
-The one exception is the opposite: a capability withheld by **licence tier** is
+The one exception is the opposite: a capability withheld by **license tier** is
 shown, and shown as locked. You are entitled to see what your install does not
 have.

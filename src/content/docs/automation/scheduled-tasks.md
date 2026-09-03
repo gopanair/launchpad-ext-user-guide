@@ -14,11 +14,27 @@ Your app does the work in the handler and returns. That is the whole mechanism.
 
 ## Setting one up
 
-On the app's **Automation** tab: the path, the method, and the schedule as a
-cron expression. The path is relative to your app — `/internal/refresh`, not the
-full URL.
+On the app's **Automation** tab: the path, the method, and — if you want one —
+the schedule as a cron expression. The path is relative to your app —
+`/internal/refresh`, not the full URL.
 
 Your install caps how many schedules one app may have.
+
+## A task without a schedule is on demand
+
+**The cron expression is optional.** Leave it empty and nothing fires the task:
+it sits there as a named, reusable operation that **Run now** and your app's own
+trigger can both still fire.
+
+That is the right shape for the thing you run by hand — a re-index, a cache
+purge, a one-off recalculation — because the alternative was inventing a
+schedule you did not want and then remembering to ignore it.
+
+Clearing the schedule on an existing task turns it into an on-demand one, and
+adding one back turns it into a scheduled one. Nothing else about it changes,
+including its run history.
+
+Jobs have always worked this way. Tasks now do too.
 
 ## What you have to know
 
@@ -34,9 +50,10 @@ for an hour of batch work.
 a check of its own — the usual approach is a shared secret in a header, from an
 environment variable.
 
-**Tell a firing from a visit.** The request carries headers naming the schedule
-and the run, so your handler can behave differently when a person opens the same
-path. The SDK exposes them.
+**Tell a firing from a visit.** The request carries headers naming the task and
+the run, so your handler can behave differently when a person opens the same
+path. The SDK exposes them, and what it gives you is the task's **name** —
+`refresh`, not `0 2 * * *`. Nothing hands your app its own cron expression.
 
 ## Reading the result
 
@@ -63,10 +80,24 @@ lp task run <name>
 ```
 
 Waits by default, and the run's outcome is the exit code. **A skipped task is
-exit 1**: a firing that did not happen is not a success.
+exit 1**: a firing that did not happen is not a success. That is true of the
+`--json` rendering too — the document prints *and* the exit code is 1.
 
 A task takes no parameters. Its parameters, if it needs any, belong to its
 schedule.
+
+The client also creates and changes them, so a task can live in the same place
+as the code that answers it:
+
+```bash
+lp task create refresh --path /internal/refresh          # on demand
+lp task create nightly --path /internal/roll --schedule "0 2 * * *"
+lp task edit nightly --schedule ""                       # now on demand
+lp task delete nightly
+```
+
+`--schedule` is the optional flag it looks like. `edit` sends only the flags you
+name, and `delete` asks first.
 
 ## This is not the job system
 

@@ -50,6 +50,28 @@ The **Logs** tab holds both of an app's logs behind one switch:
 While a deploy is in flight, or when the last one failed, the tab opens on
 **Build**. That is where the answer is.
 
+## When it fails, it says why
+
+A failed deploy carries **a reason and a sentence**, on the row and in the
+terminal frame, not only somewhere in the log:
+
+| Reason | What to do about it |
+|---|---|
+| `source_unavailable` | The code could not be fetched. Check the URL, the branch, the credential. |
+| `source_blocked` | Your install's source policy refused it. Ask an administrator — editing code will not help. |
+| `dependency_blocked` | Named packages were refused. The [Dependencies tab](../../run/dependencies/) lists them with the versions that fix them. |
+| `unsupported_framework` | Nothing here knows how to serve this tree. |
+| `manifest_invalid` | `launchpad.toml` was refused. A one-file fix. |
+| `runtime_version` | A pinned language version this install does not have. |
+| `build_failed` | The ordinary red — your build or your dependency install. **The detail is in the build log.** |
+| `publish_failed` | The built release could not be stored. |
+| `start_failed` | The workload did not start. |
+| `not_ready` | It started and never answered. The reason is in the **app** log, not the build log. |
+| `internal_error` | The platform itself. Retry, then tell somebody. |
+
+`build_failed` and `not_ready` are deliberately different words, because the
+next thing to read is a different log.
+
 ## Rejoining from the terminal
 
 ```bash
@@ -59,6 +81,15 @@ lp logs --deploy <deployID>
 
 The first rejoins a build already running. The second prints a finished build's
 log.
+
+**Arriving late at a failed build still tells you why.** Rejoining a deploy that
+has already finished and failed gets you the reason and the message, not just
+"it is over" — which is what makes `--watch` safe to run from a script that
+might be a few seconds behind.
+
+A deploy also reports **what it ignored** — a `[tasks]` table in
+`launchpad.toml`, say — as warnings, printed on the channel you are watching and
+carried in the `--json` result.
 
 ## What a deploy does not disturb
 

@@ -23,14 +23,38 @@ A policy can refuse a **deploy** — on severity, on whether a fix has been
 published, and separately on malware, which is not a severity and gets its own
 switch.
 
-Three things it deliberately cannot do:
+Two things it deliberately cannot do:
 
-- **It never stops a serving app.** Policy gates deploys. An advisory published
-  today does not take down what is already running.
 - **A restart is not a deploy.** The verdict that applies to a restart is the one
   made about *that release*, not today's feed.
 - **A stale feed never blocks.** If the advisory data cannot be refreshed,
   deploys continue.
+
+## One setting can take a serving app off the air
+
+Policy mostly gates deploys, and an advisory published today does not take down
+what is already running. There is **one exception**, and your administrator has
+to switch it on: a threshold at which an app whose serving release carries an
+unwaived finding is [locked](../locked/) and stopped.
+
+It ships off. Where it is on:
+
+- Only the **background sweep** does it — a re-check somebody presses does not.
+- Only the **serving** release counts, not your newest build.
+- A **waived** finding never locks.
+- **You are emailed** when it happens.
+- Deploying a fixed release is the way out. An unlock while the finding still
+  matches is undone on the next pass.
+
+## The tab shows the last reading
+
+Your app's Dependencies tab carries its most recent scan — when it was taken,
+what triggered it, and what it found. Every pass leaves a reading whether or not
+anything changed, because the advisory data underneath is replaced wholesale and
+"nothing changed" is not something it can know without writing it down.
+
+The full history of readings is an administrator's view. You get the latest one,
+which is the one that decides anything.
 
 ## When your deploy is refused
 

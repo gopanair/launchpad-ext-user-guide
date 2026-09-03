@@ -16,7 +16,10 @@ r      = ">=4.4"
 ```
 
 Go is the exception: its declaration is the `go` line in `go.mod`, because Go
-already has one and teaching a second would mean two places to disagree.
+already has one and teaching a second would mean two places to disagree. It is a
+**minimum**, not a pin — Go resolves it itself and never downgrades, so a
+`toolchain` line naming something older does not hold a build there. Which
+toolchain a Go build uses is your administrator's to set, not yours.
 
 ## What a pin may say
 
@@ -42,6 +45,11 @@ install.
 Your administrator decides. Versions are **discovered on the machine**, not
 compiled into Launchpad, so the set can change without a Launchpad upgrade.
 
+The published Launchpad image carries three of each — three Pythons, three
+Nodes, three Go toolchains and three Rs — so most installs offer a real choice
+without anybody having installed anything. Your install may offer more, or
+fewer.
+
 The New app page and the build log both tell you what was available.
 
 ## What is running right now
@@ -51,6 +59,11 @@ read that back:
 
 - **Your app's Settings tab**, under **Runtime** — the version this app is
   serving on, down to the patch.
+
+  **The release names its own interpreter, and that is what starts it** — so an
+  app pinned below your install's default runs on the version it asked for, in
+  either execution mode, and a restart puts back the same one. What you read
+  there is what is running, not the install's default.
 - **Your administrator's estate view**, which counts the release that is
   *serving* rather than the newest build.
 

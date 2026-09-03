@@ -26,7 +26,7 @@ If anonymous access is switched back on later, apps that were public go back to
 being public. Nothing was rewritten, so nothing is lost by the switch.
 
 The same shape applies to licensing: publishing is gated on the **change**, so
-an app that is already public keeps serving whatever happens to the licence.
+an app that is already public keeps serving whatever happens to the license.
 There is no state in which your public app quietly goes dark.
 
 ## Reachability
