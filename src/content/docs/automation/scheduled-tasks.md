@@ -55,11 +55,19 @@ the run, so your handler can behave differently when a person opens the same
 path. The SDK exposes them, and what it gives you is the task's **name** —
 `refresh`, not `0 2 * * *`. Nothing hands your app its own cron expression.
 
+## Switching a task off
+
+A task you switch off does not run **from anywhere** — not on its schedule, not
+from **Run now**, and not from your app's own trigger, which is refused with
+`schedule_disabled`. Off means off, not "off unless somebody asks".
+
 ## Reading the result
 
 Each run has an outcome, a duration, and a log. Your app can write into that
 run's own log through the SDK while it works, which is how a task that takes two
-minutes says what it is doing.
+minutes says what it is doing. The log is read in the same pane as the app log
+— search, follow, wrap, copy, download — and a long run pages to its end rather
+than stopping at its first thousand lines.
 
 What your app answers becomes the run's stored result, up to a cap your
 administrator sets. Return something small and useful — a count, a summary —

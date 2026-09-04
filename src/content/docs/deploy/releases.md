@@ -52,6 +52,11 @@ the oldest goes.
 You can also clear them yourself: delete one deployment, or every one that is
 not current.
 
+A rollback that is still queued protects the release it is returning to.
+Retention and a bulk delete both leave that one alone until the rollback has
+landed, so "roll back, then tidy up" cannot delete the thing you were rolling
+back to.
+
 ## Downloading a release
 
 The source archive of any release can be downloaded from its entry on the

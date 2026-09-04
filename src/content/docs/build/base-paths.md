@@ -49,6 +49,11 @@ return redirect("/apps/reports/dashboard")
 The proxy re-adds the prefix to a `Location` header. Prefix it yourself and it
 gets added twice.
 
+Only an absolute path is prefixed. A relative `Location` — `new/`, `?page=2`,
+`.` — is passed through untouched, because the browser resolves it against the
+page it is already on. A cookie whose `Path` already sits under the prefix is
+left alone too, so an app that knows its prefix can set one.
+
 **3. Bind to `PORT`.** Anything else is a crash on start.
 
 ## Framework by framework

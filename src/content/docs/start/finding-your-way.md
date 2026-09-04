@@ -58,6 +58,10 @@ Under **Me**:
 `⌘K` (`Ctrl-K` on Windows and Linux) opens a search across pages, apps and
 settings. It is the fastest way to reach anything named in this guide.
 
+Type the words you know a thing by, in any order: `idle sleep` finds **Sleep
+idle apps after** just as `sleep idle` does. A setting's own name finds the
+control itself, wherever it is rendered, and lands you on it.
+
 ## Documentation
 
 The **Documentation** page lists the guides installed here — this one, the admin

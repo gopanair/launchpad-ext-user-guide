@@ -92,7 +92,16 @@ viewer_runnable = true
 
 Off by default. With it on, somebody who can view the app can start that job.
 They still cannot see its command, edit it, or run any other one — and the run
-is attributed to them.
+is attributed to them. A viewer sees the runs they started and no others: a run
+somebody else started does not exist as far as they are concerned.
+
+## Pausing a job
+
+A job you switch off from the Automation tab stays off across deploys. The
+manifest's `enabled` arms a job the first time the platform sees it and never
+re-arms one you paused, so redeploying does not undo the pause. Switching it
+back on schedules the next firing from now, not from the window it missed — a
+job paused on Monday does not fire on Friday for Tuesday.
 
 ## Reading a run
 
@@ -106,6 +115,11 @@ lp job run nightly-report
 
 Waits by default, and **the run's outcome is the exit code**, so a failing
 nightly job fails your pipeline without you parsing anything.
+
+A run's log on the Automation tab is the same pane as the app log — search,
+follow, wrap, copy, download, color rendered rather than shown as escape codes
+— and a long run pages to its end. The pane holds the newest lines and says how
+many earlier ones are not on screen.
 
 Run output is capped, and runs and their logs are pruned on a retention your
 administrator sets.

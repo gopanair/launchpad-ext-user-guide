@@ -37,6 +37,10 @@ who the current viewer is.
   collapse into one.
 - It is not available to a [static app](../../build/static/) or a rendered
   [document](../../build/notebooks/): those have no process to hold a token.
+- It works on a **public** app too. A colleague who is signed in and opens a
+  public app is identified to it; a visitor who is not is asked once per
+  browser and then left alone, so a public app is never slower for the people
+  it is public for.
 
 ```python
 from launchpad import viewer, caller
